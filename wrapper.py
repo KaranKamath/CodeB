@@ -92,3 +92,11 @@ def getMySecurities(mySecurities):
             mySecurities[ticker]._numSharesOwned = int(consoleOutput[1 + i*3 + 1])
             
     return mySecurities
+
+def printStats(oldSecurities, newSecurities):
+    for security in oldSecurities:
+        changeNumShares = newSecurities._numSharesOwned - oldSecurities._numSharesOwned
+        if(changeNumShares > 0):
+            print security.ticker + " | Bought " + changeNumShares
+        elif(changeNumShares < 0):
+            print security.ticker + " | Sold " + changeNumShares
