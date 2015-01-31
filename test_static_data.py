@@ -91,4 +91,6 @@ def main():
                 print "Asking for " + x + " at price" + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
 
+
+
 main()
