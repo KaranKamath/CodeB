@@ -4,10 +4,11 @@ class Security(object):
     def numShares(self):
         return self.numShares
 
-    def __init__(self, netWorth, divRatio, volatility):
+    def __init__(self, ticker, netWorth, divRatio, volatility):
         self.netWorth = netWorth
         self.divRatio = divRatio
-        self.volatility=volatility
+        self.volatility = volatility
+        self.ticker = ticker
 
 class Orders(object):
     @property
