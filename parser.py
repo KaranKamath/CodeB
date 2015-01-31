@@ -42,35 +42,29 @@ def getMySecurities(mySecurities):
     #get marketSecurities first
     marketSecurities = {}
     consoleOutput = runMod(constants.USER_NAME, constants.PASSWORD, "SECURITIES")
-    consoleOutput = consoleOutput.split(" ")
+    consoleOutput = consoleOutput[0].split(" ")
     lenInput = len(consoleOutput)
     numSecurities = (lenInput - 1)/4
     for i in range(numSecurities):
-        marketSecurities[consoleOutput[1 + i*3]] = []
-        marketSecurities[consoleOutput[1 + i*3]].append(float(consoleOutput[1 + i*3 + 1]))
-        marketSecurities[consoleOutput[1 + i*3]].append(float(consoleOutput[1 + i*3 + 2]))
-        marketSecurities[consoleOutput[1 + i*3]].append(float(consoleOutput[1 + i*3 + 3]))
+        marketSecurities[consoleOutput[1 + i*4]] = []
+        marketSecurities[consoleOutput[1 + i*4]].append(float(consoleOutput[1 + i*4 + 1]))
+        marketSecurities[consoleOutput[1 + i*4]].append(float(consoleOutput[1 + i*4 + 2]))
+        marketSecurities[consoleOutput[1 + i*4]].append(float(consoleOutput[1 + i*4 + 3]))
     
     consoleOutput = runMod(constants.USER_NAME, constants.PASSWORD, "MY_SECURITIES")
-    consoleOutput = consoleOutput.split(" ")
+    consoleOutput = consoleOutput[0].split(" ")
     lenInput = len(consoleOutput)
     numSecurities = (lenInput - 1)/3
     for i in range(numSecurities):
         ticker = consoleOutput[1 + i*3]
-        if(mySecurities[ticker]):
-            mySecurities[ticker].netWorth = marketSecurities[ticker][0]
-            mySecurities[ticker].divRatio = float(consoleOutput[1 + i*3 + 2])
-            mySecurities[ticker].numShares = int(consoleOutput[1 + i*3 + 1])
+        if ticker in mySecurities:
+            mySecurities[ticker]._netWorth = marketSecurities[ticker][0]
+            mySecurities[ticker]._currentDivRatio = float(consoleOutput[1 + i*3 + 2])
+            mySecurities[ticker]._numSharesOwned = int(consoleOutput[1 + i*3 + 1])
         else:
             #create new Security
-            mySecurities[ticker] = 
-            mySecurities[ticker].netWorth = marketSecurities[ticker][0]
-            mySecurities[ticker].divRatio = float(consoleOutput[1 + i*3 + 2])
-            mySecurities[ticker].initDivRatio = float(consoleOutput[1 + i*3 + 2])
-            mySecurities[ticker].numShares = int(consoleOutput[1 + i*3 + 1])
-            mySecurities[ticker].volatility = marketSecurities[ticker][2]
+            mySecurities[ticker] = data.Security(ticker, marketSecurities[ticker][0], marketSecurities[ticker][1], marketSecurities[ticker][2])
+            mySecurities[ticker]._currentDivRatio = float(consoleOutput[1 + i*3 + 2])
+            mySecurities[ticker]._numSharesOwned = int(consoleOutput[1 + i*3 + 1])
             
     return mySecurities
-            
-
-print getCurrCash()
