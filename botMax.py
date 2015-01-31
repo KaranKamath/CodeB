@@ -49,100 +49,73 @@ def subscribe(user, password):
 
 def optBuy(ticker, securities, cash):
     priceToBid=utils.getMinAsk(wrapper.getMarketOrder(securities[ticker])['ASK'])*1.00001
-    print "Bidding..." + str(priceToBid) + " for " + str(ticker)
+    #print "Bidding..." + str(priceToBid) + " for " + str(ticker)
     wrapper.bid(securities[ticker], priceToBid, int(cash/(1.0*priceToBid)))
 
 def optSell(ticker, securities):
     priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[ticker])['BID'])*0.99
-    print "Selling " + str(ticker) + " at price " + str(priceToAsk)
+    #print "Selling " + str(ticker) + " at price " + str(priceToAsk)
     wrapper.ask(securities[ticker], priceToAsk, securities[ticker].numSharesOwned)
 
 def main():
     cash = run(constants.USER_NAME, constants.PASSWORD, "MY_CASH")
     portfolio = data.Portfolio(cash.split(" ")[1])
 
-    #print portfolio.cash
-
     securities=wrapper.getMySecurities({})
-    maxBuyIndex = -3655
 
     learnTable = {}
+
+    tableOrder=5
+
     for security in securities.keys():
-        learnTable[security] = [securities[security]._netWorth]*5
+        learnTable[security] = [securities[security]._netWorth]*tableOrder
 
     learnCounter = 0
 
     while True:
+        portfolio._cash=wrapper.getCurrCash()
+        portfolio._securities=securities
         import copy
         previousSecurities=copy.deepcopy(securities)
         securities=wrapper.getMySecurities(securities)
-        owned=[x for x in securities if securities[x].numSharesOwned>0]
-        print owned
+        wrapper.printStats(previousSecurities, securities)
 
-        if learnCounter == 5:
+        owned=[x for x in securities if securities[x].numSharesOwned>0]
+
+        if learnCounter == tableOrder:
             for security in learnTable.keys():
                 nwVals = learnTable[security]
                 cmpVals = [0] * (len(nwVals)-1)
                 for i in range(0, len(nwVals)-1):
-                    cmpVals[i] = cmp(nwVals[i+1],nwVals[i])
-                #print security + " " + str(cmpVals)
+                    com=cmp(nwVals[i+1], nwVals[i])
+                    if com == 0:
+                        com=1
+                    cmpVals[i] = com
+                print security + " " + str(cmpVals)
 
                 trend = reduce(lambda x, y: x+y, cmpVals)
-                #print trend
-                if trend == 4:
-                    optBuy(security, securities, portfolio.cash/2.0)
-                elif trend == -4 and security in owned:
+                #print cmpVals
+                if trend == tableOrder-1:
+                    optBuy(security, securities, portfolio.cash/1.5)
+                #elif trend == tableOrder-3 and cmpVals[0]==-1:
+                #    optBuy(security, securities, portfolio.cash/2.0)
+                #lif trend == -1*(tableOrder-3) and cmpVals[0]==1:
+                #    optSell(security, securities)
+                elif trend == -1*(tableOrder-1) and security in owned:
                     optSell(security, securities)
-
-            learnTable[security][learnCounter%5] = securities[security]._netWorth
+                #print nwVals
+            learnTable[security][learnCounter%(tableOrder-1)] = securities[security]._netWorth
             learnCounter = 0
         else:
             for security in learnTable.keys():
-                learnTable[security][learnCounter%5] = securities[security]._netWorth
+                learnTable[security][learnCounter%tableOrder] = securities[security]._netWorth
             learnCounter = learnCounter+1
 
         #print "learn " + str(learnCounter)
 
-        portfolio._cash=wrapper.getCurrCash()
-
-        #print "Cash: " + str(portfolio.cash)
-
-        #updatepfolio
-        portfolio._securities=securities
-
-        #portfolio.updateDividends()
-
-        #for x in portfolio.securities.values():
-        #    if x.numSharesOwned > 0:
-        #        print x.ticker
-        #        print "Num: " + str(x.numSharesOwned)
-        #        print "Worth: " + str(x._netWorth)
-        #        print "Ratio " + str(x.currentDivRatio)
-        #       print "Div: " + str(x.dividend) + "\n"
-
-        wrapper.printStats(previousSecurities, securities)
-
-        for x in securities.values():
-            orders=wrapper.getMarketOrder(x)
-            spread=utils.getSpread(orders)
-            x._buyIndex = -spread
-
-        #for x in toBuySorted:
-        #    print x.ticker + " " + str(x.buyIndex)
-
-        toBuySorted = sorted(securities.values(), key=lambda x: x.buyIndex, reverse=True)
-        toBuySorted = [x for x in toBuySorted if x.ticker not in owned]
-        toBuySorted = toBuySorted[:3]
 
         for x in owned:
             wrapper.clearBid(x)
-
-        for toBuy in toBuySorted[:2]:
-            priceToBid=utils.getMinAsk(wrapper.getMarketOrder(toBuy)['ASK'])*1.00001
-            #print str(priceToBid)
-            #if portfolio.cash >= portfolio.initialCash/4 and len(securities.keys())/2.0 > len(owned):
-                #print "Attempting to buy " + toBuy.ticker + " " + str(int(portfolio.cash/(8*priceToBid)))
-                #wrapper.bid(toBuy, priceToBid, int(portfolio.cash/(8*priceToBid)))
 
         print owned
 
@@ -151,8 +124,5 @@ def main():
                 priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.99
                 #print "Asking for " + x + " at price " + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
-
-        #for x in securities.values():
-        #    print x.ticker + " " + str(float(1.0/(1.0+x._volatility)))
 
 main()
