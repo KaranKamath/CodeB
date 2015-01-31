@@ -59,6 +59,8 @@ def main():
     #minSpreadShare=securities.values()[0]
     maxBuyIndex = -3655
 
+    netWorthHistories = {}
+
     while True:
 
         portfolio._cash=wrapper.getCurrCash()
@@ -72,25 +74,12 @@ def main():
         #updatepfolio
         portfolio._securities=securities
 
-        #portfolio.updateDividends()
-
-        #for x in portfolio.securities.values():
-        #    if x.numSharesOwned > 0:
-        #        print x.ticker
-        #        print "Num: " + str(x.numSharesOwned)
-        #        print "Worth: " + str(x._netWorth)
-        #        print "Ratio " + str(x.currentDivRatio)
-        #       print "Div: " + str(x.dividend) + "\n"
-
         wrapper.printStats(previousSecurities, securities)
 
         for x in securities.values():
             orders=wrapper.getMarketOrder(x)
             spread=utils.getSpread(orders)
             x._buyIndex = -spread
-
-        #for x in toBuySorted:
-        #    print x.ticker + " " + str(x.buyIndex)
 
         owned=[x for x in securities if securities[x].numSharesOwned>0]
 
