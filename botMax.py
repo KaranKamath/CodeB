@@ -96,7 +96,7 @@ def main():
                 trend = reduce(lambda x, y: x+y, cmpVals)
                 #print cmpVals
                 if trend == tableOrder-1:
-                    optBuy(security, securities, portfolio.cash/1.5)
+                    optBuy(security, securities, portfolio.cash/2.0)
                 #elif trend == tableOrder-3 and cmpVals[0]==-1:
                 #    optBuy(security, securities, portfolio.cash/2.0)
                 #lif trend == -1*(tableOrder-3) and cmpVals[0]==1:
@@ -120,7 +120,7 @@ def main():
         print owned
 
         for x in owned:
-            if securities[x].currentDivRatio < 0.2 * securities[x].initialDivRatio:
+            if securities[x].currentDivRatio < 0.1 * securities[x].initialDivRatio:
                 priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.99
                 #print "Asking for " + x + " at price " + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
