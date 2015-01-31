@@ -59,15 +59,29 @@ def main():
     #minSpreadShare=securities.values()[0]
     maxBuyIndex = -3655
 
+    learnTable = {}
+    for security in securities:
+        learnTable[security] = securities[security]._netWorth
+
+    learnCounter = 5
+
     while True:
+        import copy
+        previousSecurities=copy.deepcopy(securities)
+        securities=wrapper.getMySecurities(securities)
+
+        if learnCounter == 0:
+            for security in learnTable.keys():
+                print security + " " + str(learnTable[security]-securities[security.ticker]._netWorth)
+                learnTable[securities[security]] = securities[security]._netWorth
+            learnCounter = 5
+
+        learnCounter = learnCounter-1
+        print "learn " + str(learnCounter)
 
         portfolio._cash=wrapper.getCurrCash()
 
         print "Cash: " + str(portfolio.cash)
-
-        import copy
-        previousSecurities=copy.deepcopy(securities)
-        securities=wrapper.getMySecurities(securities)
 
         #updatepfolio
         portfolio._securities=securities
@@ -101,19 +115,22 @@ def main():
         for x in owned:
             wrapper.clearBid(x)
 
-        for toBuy in toBuySorted[:3]:
-            priceToBid=utils.getMinAsk(wrapper.getMarketOrder(toBuy)['ASK'])*1.0001
+        for toBuy in toBuySorted[:2]:
+            priceToBid=utils.getMinAsk(wrapper.getMarketOrder(toBuy)['ASK'])*1.00001
             print str(priceToBid)
-            if portfolio.cash >= portfolio.initialCash/4:
-                print "Attempting to buy " + toBuy.ticker + " " + str(int(portfolio.cash/(12*priceToBid)))
-                wrapper.bid(toBuy, priceToBid, int(portfolio.cash/(12*priceToBid)))
+            if portfolio.cash >= portfolio.initialCash/4 and len(securities.keys())/2.0 > len(owned):
+                print "Attempting to buy " + toBuy.ticker + " " + str(int(portfolio.cash/(8*priceToBid)))
+                wrapper.bid(toBuy, priceToBid, int(portfolio.cash/(8*priceToBid)))
 
         print owned
 
         for x in owned:
             if securities[x].currentDivRatio < 0.2 * securities[x].initialDivRatio:
-                priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.95
+                priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.99
                 print "Asking for " + x + " at price " + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
+
+        #for x in securities.values():
+        #    print x.ticker + " " + str(float(1.0/(1.0+x._volatility)))
 
 main()

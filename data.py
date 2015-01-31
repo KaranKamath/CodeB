@@ -32,6 +32,10 @@ class Security(object):
     def initialDivRatio(self):
         return self._initialDivRatio
 
+    @property
+    def volatility(self):
+        return self._volatility
+
     def __init__(self, ticker, netWorth, initialDivRatio, volatility):
         self._netWorth = netWorth
         self._initialDivRatio = initialDivRatio
