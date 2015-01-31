@@ -103,3 +103,15 @@ def printStats(oldSecurities, newSecurities):
             print security + " | Bought " + str(changeNumShares)
         elif(changeNumShares < 0):
             print security + " | Sold " + str(changeNumShares)
+
+def dictStats(oldSecurities, newSecurities):
+    if not oldSecurities or not newSecurities:#nulltest
+        return
+
+    output = {}
+    for security in oldSecurities.keys():
+        changeNumShares = newSecurities[security]._numSharesOwned - oldSecurities[security]._numSharesOwned
+        if(changeNumShares != 0):
+            output[security] = changeNumShares
+            
+    return output
