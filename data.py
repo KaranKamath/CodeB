@@ -1,9 +1,5 @@
 class Security(object):
 
-    @property()
-    def timeHeld(self):
-        return self.timeHeld
-
     @property
     def numShares(self):
         return self.numShares
@@ -12,7 +8,6 @@ class Security(object):
         self.netWorth = netWorth
         self.divRatio = divRatio
         self.volatility=volatility
-        self.timeHeld=0
 
 class Orders(object):
     @property
