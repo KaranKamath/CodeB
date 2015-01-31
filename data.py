@@ -24,6 +24,10 @@ class Security(object):
     def numShares(self):
         return self._numShares
 
+    @property
+    def initialDivRatio(self):
+        return self._initialDivRatio
+
     def __init__(self, ticker, netWorth, initialDivRatio, volatility):
         self._netWorth = netWorth
         self._initialDivRatio = initialDivRatio
@@ -75,10 +79,10 @@ class Portfolio(object):
             if currentSecurity._numSharesOwned == 0:
                 currentSecurity._dividend=0
 
-            if currentSecurity._numSharesOwned > 0:
-                divAdd=currentSecurity.currentDivRatio * currentSecurity._netWorth * 1.0 / (1.0 * currentSecurity._numSharesOwned)
-                print divAdd
-                currentSecurity._dividend += divAdd
+            #if currentSecurity._numSharesOwned > 0:
+             #   divAdd=currentSecurity.currentDivRatio * currentSecurity._netWorth * 1.0 / (1.0 * currentSecurity._numSharesOwned)
+              #  print divAdd
+               # currentSecurity._dividend += divAdd
 
     def __init__(self, cash):
         self._cash=float(cash)
