@@ -2,15 +2,15 @@ class Security(object):
 
     @property
     def numSharesOwned(self):
-        return self.numSharesOwned
+        return self._numSharesOwned
 
     @property
     def priceBoughtAt(self):
-        return self.priceBoughtAt
+        return self._priceBoughtAt
 
     @property
     def currentDivRatio(self):
-        return self.currentDivRatio
+        return self._currentDivRatio
 
     @property
     def dividend(self):
@@ -18,22 +18,30 @@ class Security(object):
 
     @property
     def numShares(self):
-        return self.numShares
+        return self._numShares
 
     def __init__(self, netWorth, initialDivRatio, volatility):
-        self.netWorth = netWorth
-        self.initalDivRatio = initialDivRatio
-        self.volatility=volatility
+        self._netWorth = netWorth
+        self._initalDivRatio = initialDivRatio
+        self._volatility=volatility
 
 class Orders(object):
     @property
     def price(self):
-        return self.price
+        return self._price
 
     @property
     def share(self):
-        self.share
+        self._share
 
     def __init__(self, share, price):
-        self.price=price
-        self.share=share
+        self._price=price
+        self._share=share
+
+class Portfolio(object):
+    @property
+    def cash(self):
+        return self._cash
+
+    def __init__(self, cash):
+        self._cash=cash
