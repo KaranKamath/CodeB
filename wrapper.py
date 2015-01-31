@@ -94,9 +94,12 @@ def getMySecurities(mySecurities):
     return mySecurities
 
 def printStats(oldSecurities, newSecurities):
-    for security in oldSecurities:
-        changeNumShares = newSecurities._numSharesOwned - oldSecurities._numSharesOwned
+    if not oldSecurities or not newSecurities:
+        return
+
+    for security in oldSecurities.keys():
+        changeNumShares = newSecurities[security]._numSharesOwned - oldSecurities[security]._numSharesOwned
         if(changeNumShares > 0):
-            print security.ticker + " | Bought " + changeNumShares
+            print security + " | Bought " + str(changeNumShares)
         elif(changeNumShares < 0):
-            print security.ticker + " | Sold " + changeNumShares
+            print security + " | Sold " + str(changeNumShares)
