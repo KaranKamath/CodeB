@@ -44,6 +44,20 @@ def clearAsk(ticker):
 
 def bid(share, price, n):
     runCMDWithParam("BID", share.ticker, price, n)
+    
+def getMarketOrder(share):
+    consoleOutput = runCMDWithParam("ORDERS", share.ticker)
+    consoleOutput = consoleOutput[0].split(" ")
+    numOrders = (len(consoleOutput) - 1)/4
+    order = {}
+    order['BID'] = []
+    order['ASK'] = []
+    for i in range(numOrders):
+        if(consoleOutput[1 + i*4] == "BID"):
+            order['BID'].append(data.Orders(share,float(consoleOutput[1 + i*4 + 2])))
+        if(consoleOutput[1 + i*4] == "ASK"):
+            order['ASK'].append(data.Orders(share,float(consoleOutput[1 + i*4 + 2])))
+    return order
 
 def getMySecurities(mySecurities):
     #get marketSecurities first
