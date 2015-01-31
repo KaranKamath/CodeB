@@ -65,6 +65,19 @@ def main():
         previousSecurities=copy.deepcopy(securities)
         securities=wrapper.getMySecurities(securities)
 
+        #updatepfolio
+        portfolio._securities=securities
+
+        portfolio.updateDividends()
+
+        for x in portfolio.securities.values():
+            if x.numSharesOwned > 0:
+                print x.ticker
+                print "Num: " + str(x.numSharesOwned)
+                print "Worth: " + str(x._netWorth)
+                print "Ratio " + str(x.currentDivRatio)
+                print "Div: " + str(x.dividend) + "\n"
+
         wrapper.printStats(previousSecurities, securities)
 
         for x in securities.values():
@@ -90,7 +103,5 @@ def main():
                 priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.95
                 print "Asking for " + x + " at price" + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
-
-
 
 main()
