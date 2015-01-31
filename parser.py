@@ -33,10 +33,10 @@ def getCurrCash():
     return float(consoleOutput[1])
     
 def clearBid(ticker):
-    runMod(constants.USER_NAME, constants.PASSWORD, "CLEAR_BID" + ticker)
+    runMod(constants.USER_NAME, constants.PASSWORD, "CLEAR_BID " + ticker)
 
 def clearAsk(ticker):
-    runMod(constants.USER_NAME, constants.PASSWORD, "CLEAR_ASK" + ticker)
+    runMod(constants.USER_NAME, constants.PASSWORD, "CLEAR_ASK " + ticker)
     
 def getMySecurities(mySecurities):
     #get marketSecurities first
