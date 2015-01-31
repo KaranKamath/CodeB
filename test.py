@@ -39,6 +39,8 @@ def subscribe(user, password):
         sock.close()
 
 def main():
-    run(constants.USER_NAME, constants.PASSWORD, "MY_CASH")
+    while True:
+        inputCMD=raw_input();
+        run(constants.USER_NAME, constants.PASSWORD, inputCMD)
 
 main()
