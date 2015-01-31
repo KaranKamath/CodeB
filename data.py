@@ -17,6 +17,10 @@ class Security(object):
         return self._currentDivRatio
 
     @property
+    def buyIndex(self):
+        return self._buyIndex
+
+    @property
     def dividend(self):
         return self._dividend
 
@@ -34,6 +38,8 @@ class Security(object):
         self._volatility=volatility
         self._ticker=ticker
         self._dividend=0
+        from sys import maxint
+        self._buyIndex=-maxint-1
 
 class Orders(object):
     @property
@@ -42,7 +48,7 @@ class Orders(object):
 
     @property
     def share(self):
-        self._share
+        return self._share
 
     def __init__(self, share, price):
         self._price=price
