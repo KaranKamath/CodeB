@@ -52,10 +52,10 @@ def optBuy(ticker, securities, cash):
     #print "Bidding..." + str(priceToBid) + " for " + str(ticker)
     wrapper.bid(securities[ticker], priceToBid, int(cash/(1.0*priceToBid)))
 
-def optSell(ticker, securities):
+def optSell(ticker, securities, factor):
     priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[ticker])['BID'])*0.99
     #print "Selling " + str(ticker) + " at price " + str(priceToAsk)
-    wrapper.ask(securities[ticker], priceToAsk, securities[ticker].numSharesOwned)
+    wrapper.ask(securities[ticker], priceToAsk, securities[ticker].numSharesOwned/factor)
 
 def main():
     cash = run(constants.USER_NAME, constants.PASSWORD, "MY_CASH")
@@ -71,6 +71,8 @@ def main():
         learnTable[security] = [securities[security]._netWorth]*tableOrder
 
     learnCounter = 0
+
+    divStocks=set([])
 
     while True:
         portfolio._cash=wrapper.getCurrCash()
@@ -102,7 +104,8 @@ def main():
                 #lif trend == -1*(tableOrder-3) and cmpVals[0]==1:
                 #    optSell(security, securities)
                 elif trend == -1*(tableOrder-1) and security in owned:
-                    optSell(security, securities)
+                    if security not in divStocks:
+                        optSell(security, securities, 2.0)
                 #print nwVals
             learnTable[security][learnCounter%(tableOrder-1)] = securities[security]._netWorth
             learnCounter = 0
@@ -124,5 +127,15 @@ def main():
                 priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.99
                 #print "Asking for " + x + " at price " + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
+                if (x in divStocks):
+                    divStocks.remove(x)
 
+        for security in securities.values():
+            spread = utils.getSpread(wrapper.getMarketOrder(security))
+            if spread < 0.7 and security.ticker not in owned:
+                optBuy(security.ticker, securities, portfolio.cash/2.0)
+                divStocks.add(security.ticker)
+
+        divStocks = set(divStocks)
+        print divStocks
 main()
