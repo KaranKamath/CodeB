@@ -18,7 +18,7 @@ class Security(object):
 
     @property
     def dividend(self):
-        return self.netWorth * self.currentDivRatio * self.numSharesOwned
+        return self._dividend
 
     @property
     def numShares(self):
@@ -29,6 +29,7 @@ class Security(object):
         self._initialDivRatio = initialDivRatio
         self._volatility=volatility
         self._ticker=ticker
+        self._dividend=0
 
 class Orders(object):
     @property
@@ -51,6 +52,33 @@ class Portfolio(object):
     @property
     def initialCash(self):
         return self._initialCash
+
+    @property
+    def securities(self):
+        return self._securities
+
+    def addSecurity(self, x):
+        self._securities[x.ticker] = x
+
+    def removeSecurity(self, x):
+        del self._securities[x.ticker]
+
+    def update(self, owned):
+        for share in owned:
+            portShare=self.securities[share.ticker]
+            portShare.netWorth=share.netWorth
+            portShare.currentDivRatio=share.currentDivRatio
+
+    def updateDividends(self):
+        for x in self.securities.keys():
+            currentSecurity=self.securities[x]
+            if currentSecurity._numSharesOwned == 0:
+                currentSecurity._dividend=0
+
+            if currentSecurity._numSharesOwned > 0:
+                divAdd=currentSecurity.currentDivRatio * currentSecurity._netWorth * 1.0 / (1.0 * currentSecurity._numSharesOwned)
+                print divAdd
+                currentSecurity._dividend += divAdd
 
     def __init__(self, cash):
         self._cash=float(cash)
