@@ -25,6 +25,10 @@ def runMod(user, password, *commands):
         
     return output
 
+def runCMDWithParam(cmd, *params):
+    params=[str(x) for x in params]
+    paramString=' '.join(params)
+    return runMod(constants.USER_NAME, constants.PASSWORD, cmd + " " + paramString)
 
 def getCurrCash():
     consoleOutput = runMod(constants.USER_NAME, constants.PASSWORD, "MY_CASH")
@@ -37,7 +41,10 @@ def clearBid(ticker):
 
 def clearAsk(ticker):
     runMod(constants.USER_NAME, constants.PASSWORD, "CLEAR_ASK " + ticker)
-    
+
+def bid(share, price, n):
+    runCMDWithParam("BID", share.ticker, price, n)
+
 def getMySecurities(mySecurities):
     #get marketSecurities first
     marketSecurities = {}
