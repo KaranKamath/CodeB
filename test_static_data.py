@@ -61,7 +61,12 @@ def main():
     while True:
         portfolio._cash=wrapper.getCurrCash()
 
+        import copy
+        previousSecurities=copy.deepcopy(securities)
         securities=wrapper.getMySecurities(securities)
+
+        wrapper.printStats(previousSecurities, securities)
+
         for x in securities.values():
             orders=wrapper.getMarketOrder(x)
             spread=utils.getSpread(orders)
@@ -72,7 +77,7 @@ def main():
 
         owned=[x for x in securities if securities[x].numSharesOwned>0]
 
-        if (minSpreadShare not in owned):
+        if (minSpreadShare.ticker not in owned):
             #print minSpreadOrder
             priceToBid=utils.getMinAsk(minSpreadOrder['ASK'])*1.0001
             if portfolio.cash > portfolio.initialCash/2:
@@ -82,7 +87,8 @@ def main():
 
         for x in owned:
             if securities[x].currentDivRatio < 0.0001:
-                priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(x)['BID'])*0.99
+                priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(securities[x])['BID'])*0.95
+                print "Asking for " + x + " at price" + str(priceToAsk)
                 wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
 
 main()
