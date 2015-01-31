@@ -44,7 +44,10 @@ def clearAsk(ticker):
 
 def bid(share, price, n):
     runCMDWithParam("BID", share.ticker, price, n)
-    
+
+def ask(share, price, n):
+    runCMDWithParam("ASK", share.ticker, price, n)
+
 def getMarketOrder(share):
     consoleOutput = runCMDWithParam("ORDERS", share.ticker)
     consoleOutput = consoleOutput[0].split(" ")

@@ -59,8 +59,9 @@ def main():
     minSpreadShare=securities.values()[0]
 
     while True:
+        portfolio._cash=wrapper.getCurrCash()
+
         securities=wrapper.getMySecurities(securities)
-        minSpreadOrder=[]
         for x in securities.values():
             orders=wrapper.getMarketOrder(x)
             spread=utils.getSpread(orders)
@@ -70,13 +71,18 @@ def main():
                 minSpreadOrder=orders
 
         owned=[x for x in securities if securities[x].numSharesOwned>0]
-        print owned
 
         if (minSpreadShare not in owned):
+            #print minSpreadOrder
             priceToBid=utils.getMinAsk(minSpreadOrder['ASK'])*1.0001
             if portfolio.cash > portfolio.initialCash/2:
                 wrapper.bid(minSpreadShare, priceToBid, (int)(portfolio.cash/(4*priceToBid)))
 
         #print owned
+
+        for x in owned:
+            if securities[x].currentDivRatio < 0.0001:
+                priceToAsk=utils.getMaxBid(wrapper.getMarketOrder(x)['BID'])*0.99
+                wrapper.ask(securities[x], priceToAsk, securities[x].numSharesOwned)
 
 main()
