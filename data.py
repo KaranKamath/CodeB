@@ -48,5 +48,10 @@ class Portfolio(object):
     def cash(self):
         return self._cash
 
+    @property
+    def initialCash(self):
+        return self._initialCash
+
     def __init__(self, cash):
-        self._cash=cash
+        self._cash=float(cash)
+        self._initialCash=float(cash)

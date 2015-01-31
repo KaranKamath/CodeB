@@ -3,6 +3,7 @@ import sys
 import constants
 import data
 import wrapper
+import utils
 
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
@@ -54,12 +55,28 @@ def main():
 
     securities=wrapper.getMySecurities({})
 
-    wrapper.bid(securities["GOOG"], 76.0, 3)
-
-    print securities
+    minSpread=portfolio.cash;
+    minSpreadShare=securities.values()[0]
 
     while True:
-        inputCMD=raw_input();
-        run(constants.USER_NAME, constants.PASSWORD, inputCMD)
+        securities=wrapper.getMySecurities(securities)
+        minSpreadOrder=[]
+        for x in securities.values():
+            orders=wrapper.getMarketOrder(x)
+            spread=utils.getSpread(orders)
+            if(spread < minSpread):
+                minSpread=spread
+                minSpreadShare=x
+                minSpreadOrder=orders
+
+        owned=[x for x in securities if securities[x].numSharesOwned>0]
+        print owned
+
+        if (minSpreadShare not in owned):
+            priceToBid=utils.getMinAsk(minSpreadOrder['ASK'])*1.0001
+            if portfolio.cash > portfolio.initialCash/2:
+                wrapper.bid(minSpreadShare, priceToBid, (int)(portfolio.cash/(4*priceToBid)))
+
+        #print owned
 
 main()
